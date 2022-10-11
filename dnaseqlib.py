@@ -62,9 +62,9 @@ def buildComparisonImage(filename, w, h, alen, blen, matches, remapfn=lambda x:m
     # arr = Array2D('L', w, h, 0L)
     arr = Array2D('L', w, h, 0)
     # print "Sequence A length: " + str(alen)
-    print ("Sequence A length: ") + str(alen)
+    print (f"Sequence A length: {str(alen)}") 
     # print "Sequence B length: " + str(blen)
-    print ("Sequence B length: ") + str(blen)
+    print (f"Sequence B length: {str(blen)}")
     abinsize = int(math.ceil(alen / float(w)))
     bbinsize = int(math.ceil(blen / float(h)))
     assert abinsize > 0 and bbinsize > 0

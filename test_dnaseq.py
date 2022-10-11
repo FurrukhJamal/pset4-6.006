@@ -33,4 +33,20 @@ class TestExactSubmatches(unittest.TestCase):
        for x in correct:
            self.assertTrue(x in matches)
 
+
+class TestintervalSubsequenceHashes(unittest.TestCase):
+    def test_interval(self):
+        foo = "abcxyzabcdefabcklmabcku"
+        matches = list(intervalSubsequenceHashes(iter(foo), 3, 3))
+        print(f"matches : {matches}")
+        rhash = RollingHash("abc")
+        hash = rhash.current_hash()
+        correct = [(hash , ("abc", 0)), (hash , ("abc", 6)), (hash , ("abc", 12)), (hash , ("abc", 18))]
+        self.assertTrue(len(matches) == len(correct))
+        self.assertTrue(matches[0][0] == correct[0][0])
+        self.assertTrue(matches[0][1][1] == correct[0][1][1])
+        self.assertTrue(matches[1][1][1] == correct[1][1][1])
+        self.assertTrue(matches[2][1][1] == correct[2][1][1])
+        self.assertTrue(matches[3][1][1] == correct[3][1][1])
+
 unittest.main()

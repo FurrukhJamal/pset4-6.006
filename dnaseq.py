@@ -11,6 +11,7 @@ class Multidict:
     # Initializes a new multi-value dictionary, and adds any key-value
     # 2-tuples in the iterable sequence pairs to the data structure.
     def __init__(self, pairs=[]):
+        # print(f"pairs: {pairs}")
         self.data = {}
         for tup in pairs:
             self.put(tup[0], tup[1])
@@ -32,14 +33,19 @@ class Multidict:
         else : 
             return []
 
+    def __str__(self):
+        return self.data.__str__()
+
 # Given a sequence of nucleotides, return all k-length subsequences
 # and their hashes.  (What else do you need to know about each
 # subsequence?)
 def subsequenceHashes(seq, k):
-    subseq = ""
-    for i in range(k):
-        subseq += seq.next()
-    print(f"subseq : {subseq}")
+    # print(f"seq in subsequenceHashes: {seq}")
+    subseq = getInitialSeqOfKLength(seq, k)
+    # for i in range(k):
+    #     subseq += seq.next()
+    #     # subseq += i
+    # print(f"subseq : {subseq}")
     arrSubSeq = list(subseq)
     rHash = RollingHash(subseq)
     # hashes = {}
@@ -48,7 +54,7 @@ def subsequenceHashes(seq, k):
         try:
             hash = rHash.current_hash()
             yield (hash , (subseq, position - k))
-            char = seq.next()
+            char = seq.__next__()
             
             # if hash in hashes:
             #     hashes[hash].append((subseq, position - k))
@@ -101,22 +107,66 @@ def sequenceGenerator(seq):
 # every m nucleotides.  (This will be useful when you try to use two
 # whole data files.)
 def intervalSubsequenceHashes(seq, k, m):
-    raise Exception("Not implemented!")
+    counter = 0
+    pos = 0
+    while True:
+        try:
+            # print(f"counter : {counter} , m : {m}")
+            if counter % (m + 1) == 0:
+                subseq = ""
+                for i in range(k):
+                    subseq += seq.__next__()
+                    # counter += 1
+                    pos += 1
+                rHash = RollingHash(subseq)
+                yield (rHash.current_hash(), (subseq , pos - k))
+                counter += 1
+                
+            else : 
+                seq.__next__()
+                counter += 1
+                pos += 1
+        except StopIteration:
+            return
+            
 
 # Searches for commonalities between sequences a and b by comparing
 # subsequences of length k.  The sequences a and b should be iterators
 # that return nucleotides.  The table is built by computing one hash
 # every m nucleotides (for m >= k).
 def getExactSubmatches(a, b, k, m):
-    multiDictA = Multidict( subsequenceHashes(a, k))
-    multiDictB = Multidict(subsequenceHashes(b, k))
+    # multiDictA = Multidict( subsequenceHashes(a, k))
+    multiDictA = Multidict(intervalSubsequenceHashes(a, k , m))
+    # multiDictB = Multidict(subsequenceHashes(b, k))
 
-    for hashA, (subseqA, positionA) in subsequenceHashes(a, k):
-        if len(multiDictB.get(hashA)) != 0:
-            for val in multiDictB.get(hashA):
-                print(val)
-                # if val[0] == subseqA:
-                #     yield(positionA, val[1]) 
+    # print(f"multiDictA : {multiDictA}")
+    
+    for hashB, (subseqB, positionB) in subsequenceHashes(b, k):
+        # if len(multiDictA.get(hashB) != 0):
+            # print(f"subseqB : {subseqB}")
+            for data in multiDictA.get(hashB):
+                # print(data[0])
+                if data[0] == subseqB:
+                    # print("match found")
+                    yield (data[1], positionB)
+     
+
+
+def getFullSeq(iterator):
+    seq = ""
+    for char in iterator:
+        seq += char
+    return seq 
+
+def getInitialSeqOfKLength(iterator, k):
+    counter = 0
+    seq = ""
+    for char in iterator:
+        seq += char
+        counter += 1
+        if counter == k:
+            break
+    return seq
 
 
 

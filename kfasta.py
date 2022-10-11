@@ -19,7 +19,7 @@ class FastaSequence:
     def __iter__(self):
         return self
         # yield self.next()
-    def next(self):
+    def __next__(self):
         while '' == self.buf:
             # print(f"self.buf : {self.buf}")
             self.buf = self.f.readline()
@@ -84,5 +84,5 @@ def myTest():
 
 
 if __name__ == '__main__':
-#    unittest.main()
+    unittest.main()
     main()
